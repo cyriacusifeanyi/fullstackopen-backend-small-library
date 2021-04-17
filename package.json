@@ -1,0 +1,15 @@
+{
+  "name": "small_library",
+  "version": "1.0.0",
+  "description": "implementation of GrapdQL server for a small library.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "GraphQL",
+    "fullstackopen"
+  ],
+  "author": "Ifeanyi Cyriacus",
+  "license": "ISC"
+}
