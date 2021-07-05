@@ -91,9 +91,9 @@ const { v1: uuid } = require('uuid')
 const typeDefs = gql`
   type Book {
     title: String!
-    published: String!
-    author: String!
-    genres: [String!]
+    published: Int!
+    author: Author!
+    genres: [String!]!
     id: ID!
   }
 
