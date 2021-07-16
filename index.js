@@ -178,39 +178,34 @@ const resolvers = {
     addBook: (root, args) => {
       // if author is not found
       // if (Author.find(author => author.name !== args.author)) {
-        const newAuthor = {
-          id: uuid(),
-          name: args.author
-        }
+      const newAuthor = {
+        id: uuid(),
+        name: args.author
+      }
 
-        // console.log(newAuthor)
-        new Author({ ...newAuthor }).save()
-        
-        const book = new Book({ ...args })
-        return book.save()
-        // .catch(error => {
-        //   throw new UserInputError(error.message, {
-        //     invalidArgs: args,
-        //   })
-        // })
+      // console.log(newAuthor)
+      new Author({ ...newAuthor }).save()
 
-        // return book.save()
-        // .catch(error => {
-        //   throw new UserInputError(error.message, {
-        //     invalidArgs: args,
-        //   })
+      const book = new Book({ ...args })
+      return book.save()
+      // .catch(error => {
+      //   throw new UserInputError(error.message, {
+      //     invalidArgs: args,
+      //   })
+      // })
+
+      // return book.save()
+      // .catch(error => {
+      //   throw new UserInputError(error.message, {
+      //     invalidArgs: args,
+      //   })
       // }
 
     },
     editAuthor: (root, args) => {
-      const author = authors.find(author => author.name === args.name)
-      if (!author) {
-        return null
-      }
-
-      const updatedAuthor = { ...author, born: args.setBornTo }
-      authors = authors.map(author => author.name === args.name ? updatedAuthor : author)
-      return updatedAuthor
+      return Author.findOneAndUpdate(
+        { name: args.name },
+        { born: args.setBornTo })
     },
   }
 }
