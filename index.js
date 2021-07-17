@@ -175,38 +175,38 @@ const resolvers = {
     }
   },
   Mutation: {
-    addBook: (root, args) => {
+    addBook: async (root, args) => {
       // if author is not found
       // if (Author.find(author => author.name !== args.author)) {
       const newAuthor = {
         id: uuid(),
         name: args.author
       }
-
-      // console.log(newAuthor)
       new Author({ ...newAuthor }).save()
-
       const book = new Book({ ...args })
-      return book.save()
-      // .catch(error => {
-      //   throw new UserInputError(error.message, {
-      //     invalidArgs: args,
-      //   })
-      // })
 
-      // return book.save()
-      // .catch(error => {
-      //   throw new UserInputError(error.message, {
-      //     invalidArgs: args,
-      //   })
-      // }
+      try {
+        await book.save()
+      } catch (error) {
+        throw new UserInputError(error.message, {
+          invalidArgs: args,
+        })
+      }
+      return book
+    },
+    editAuthor: async (root, args) => {
+      const author = await Author.findOne({ name: args.name })
+      author.born = args.setBornTo
 
-    },
-    editAuthor: (root, args) => {
-      return Author.findOneAndUpdate(
-        { name: args.name },
-        { born: args.setBornTo })
-    },
+      try {
+        await author.save()
+      } catch (error) {
+        throw new UserInputError(error.message, {
+          invalidArgs: args,
+        })
+      }
+      return author
+    }
   }
 }
 
