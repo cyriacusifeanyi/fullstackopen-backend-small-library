@@ -137,14 +137,21 @@ const resolvers = {
   Query: {
     bookCount: () => Book.collection.countDocuments(),
     authorCount: () => Author.collection.countDocuments(),
-    allBooks: (root, args) => {
+    allBooks: async (root, args) => {
+      let result = null
       if (args.author && args.genre) {
         console.log(1)
-        return books.find(book => book.author === args.author && book.genres.includes(args.genre))
+        result = await Book.find({ author: args.author, genres: args.genre })
+        console.log(result)
+        return result
       } else if (args.author) {
-        return books.find(book => book.author === args.author)
+        console.log(2)
+        result = await Book.find({ author: args.author })
+        return result
       } else if (args.genre) {
-        return books.find(book => book.genres.includes(args.genre))
+        console.log(3)
+        result = await Book.find({ genres: args.genre })
+        return result
       }
     },
     allBooks2: () => {
@@ -175,7 +182,7 @@ const resolvers = {
       if (!currentUser) {
         throw new AuthenticationError("not authenticated")
       }
-      
+
       const newAuthor = {
         id: uuid(),
         name: args.author
