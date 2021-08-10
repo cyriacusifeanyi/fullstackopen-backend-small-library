@@ -88,6 +88,7 @@ const typeDefs = gql`
     born: Int
     bookCount: Int!
     id: ID!
+    books: [Book!]!
   }
 
   type User {
@@ -141,26 +142,28 @@ const resolvers = {
       let result = null
       if (args.author && args.genre) {
         console.log(1)
-        result = await Book.find({ author: args.author, genres: args.genre })
+        result = await Book.find({ author: args.author, genres: args.genre }).populate('author')
         console.log(result)
         return result
       } else if (args.author) {
         console.log(2)
-        result = await Book.find({ author: args.author })
+        result = await Book.find({ author: args.author }).populate('author')
         return result
       } else if (args.genre) {
         console.log(3)
-        result = await Book.find({ genres: args.genre })
+        result = await Book.find({ genres: args.genre }).populate('author')
+        console.log(result)
+
         return result
       }
     },
     allBooks2: () => {
       // filters missing
-      return Book.find({})
+      return Book.find({}).populate('author')
     },
     allAuthors: () => {
       // filters missing
-      return Author.find({})
+      return Author.find({}).populate('books')
     },
     me: (root, args, context) => {
       return context.currentUser
@@ -184,12 +187,23 @@ const resolvers = {
       }
 
       const newAuthor = {
-        id: uuid(),
+        // id: uuid(),
         name: args.author
       }
 
-      new Author({ ...newAuthor }).save()
-      const book = new Book({ ...args })
+      // if exist use existing object
+      let author = await Author.findOne({ name: args.author })
+      if (!author) {
+        console.log("author does not exist: ")
+        author = await new Author({ ...newAuthor }).save()
+      }
+
+      const book = new Book({
+        title: args.title,
+        author: author,
+        published: args.published,
+        genres: args.genres
+      })
 
       try {
         await book.save()
